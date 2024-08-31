@@ -1,7 +1,8 @@
 "use client"; // Ensures the component is rendered on the client-side
 
 import React, { useState } from 'react';
-// Learned how the useRouter hook works via https://nextjs.org/docs/app/building-your-application/routing/redirecting
+//https://nextjs.org/docs/pages/building-your-application/routing/linking-and-navigating
+//the above link help with understing linking and routing
 import { useRouter } from 'next/navigation';
 
 const SignupPage = () => {
@@ -10,13 +11,14 @@ const SignupPage = () => {
   const [signLastName, setSignLastName] = useState('');
   const [signUsername, setSignUsername] = useState('');
   const [signPassword, setSignPassword] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
 
   // useRouter hook to programmatically navigate to different pages
   const router = useRouter();
 
   // Function to handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevents default form submission behavior
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevents default form submission behavior which would normally reload the page
 
     // Send signup data to the API
     const response = await fetch('/api/mysql/users', {
@@ -33,11 +35,15 @@ const SignupPage = () => {
     });
 
     if (response.ok) {
-      // Redirect to the home page after successful signup
-      router.push('/'); // Uses the useRouter hook to navigate to the home page
+      // Display a success message and then redirect after a short delay
+      setSuccessMessage('Signup successful! Redirecting...');
+      setTimeout(() => {
+        router.push('/'); // Uses the useRouter hook to navigate to the home page
+      }, 2000); // Redirect after 2 seconds
     } else {
       // Log an error if signup fails
       console.error('Signup failed');
+      setSuccessMessage('Signup failed. Please try again.');
     }
   };
 
@@ -52,32 +58,37 @@ const SignupPage = () => {
             type="text"
             placeholder="First Name"
             className="w-full mb-4 p-2 border rounded-md text-black"
-            onChange={e => setSignFirstName(e.target.value)} // Updates the state as the user types
+            onChange={e => setSignFirstName(e.target.value)}
           />
           <input
             type="text"
             placeholder="Last Name"
             className="w-full mb-4 p-2 border rounded-md text-black"
-            onChange={e => setSignLastName(e.target.value)} // Updates the state as the user types
+            onChange={e => setSignLastName(e.target.value)}
           />
           <input
             type="text"
             placeholder="Username"
             className="w-full mb-4 p-2 border rounded-md text-black"
-            onChange={e => setSignUsername(e.target.value)} // Updates the state as the user types
+            onChange={e => setSignUsername(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
             className="w-full mb-4 p-2 border rounded-md text-black"
-            onChange={e => setSignPassword(e.target.value)} // Updates the state as the user types
+            onChange={e => setSignPassword(e.target.value)}
           />
           <button
-            type="submit" // Submits the form data when clicked
+            type="submit"
             className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600"
           >
             Sign Up
           </button>
+          {successMessage && (
+            <div className="mt-4 text-center text-green-500">
+              {successMessage}
+            </div>
+          )}
         </form>
       </div>
     </div>

@@ -26,7 +26,7 @@ const LoginPage = () => {
 
     if (response.ok) {
       // Handle successful login (e.g., redirect to home page)
-      router.push('/');
+      router.push('/feed');
     } else {
       console.error('Login failed');
     }
